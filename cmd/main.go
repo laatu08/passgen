@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/atotto/clipboard"
-	"passgen/internal/generator"
+	"github.com/laatu08/passgen/internal/generator"
 )
 
 func expandCombinedFlags(args []string) []string {
