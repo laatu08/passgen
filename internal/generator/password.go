@@ -9,9 +9,14 @@ import (
 // const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"
 
 const (
-	uppercase  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	lowercase  = "abcdefghijklmnopqrstuvwxyz"
-	digitsSet  = "0123456789"
+	uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	lowercase = "abcdefghijklmnopqrstuvwxyz"
+	digitsSet = "0123456789"
+
+	uppercaseNoAmbig = "ABCDEFGHJKLMNPQRSTUVWXYZ"
+	lowercaseNoAmbig = "abcdefghijkmnopqrstuvwxyz"
+	digitsNoAmbig    = "23456789"
+
 	symbolsSet = "!@#$%^&*()-_=+[]{}<>?/|"
 )
 
@@ -23,7 +28,7 @@ func randomChar(set string) (byte, error) {
 	return set[n.Int64()], nil
 }
 
-func Generate(length int, upper, lower, digits, symbols bool) (string, error) {
+func Generate(length int, upper, lower, digits, symbols, noAmbiguous bool) (string, error) {
 	if length <= 0 {
 		return "", errors.New("length must be greater than 0")
 	}
@@ -31,20 +36,30 @@ func Generate(length int, upper, lower, digits, symbols bool) (string, error) {
 	password := make([]byte, 0, length)
 	charset := ""
 
+	upperSet := uppercase
+	lowerSet := lowercase
+	digitSet := digitsSet
+
+	if noAmbiguous {
+		upperSet = uppercaseNoAmbig
+		lowerSet = lowercaseNoAmbig
+		digitSet = digitsNoAmbig
+	}
+
 	if upper {
-		c, _ := randomChar(uppercase)
+		c, _ := randomChar(upperSet)
 		password = append(password, c)
-		charset += uppercase
+		charset += upperSet
 	}
 	if lower {
-		c, _ := randomChar(lowercase)
+		c, _ := randomChar(lowerSet)
 		password = append(password, c)
-		charset += lowercase
+		charset += lowerSet
 	}
 	if digits {
-		c, _ := randomChar(digitsSet)
+		c, _ := randomChar(digitSet)
 		password = append(password, c)
-		charset += digitsSet
+		charset += digitSet
 	}
 	if symbols {
 		c, _ := randomChar(symbolsSet)

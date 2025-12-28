@@ -17,6 +17,7 @@ func main() {
 	symbols := flag.Bool("symbols", false, "Include symbols")
 	count := flag.Int("count", 1, "Number of passwords to generate")
 	clipboardFlag := flag.Bool("clipboard", false, "Copy password to clipboard")
+	noAmbiguous := flag.Bool("no-ambiguous", false, "Exclude ambiguous characters (0, O, l, 1, I)")
 
 	flag.Parse()
 
@@ -36,6 +37,7 @@ func main() {
 			*lower,
 			*digits,
 			*symbols,
+			*noAmbiguous,
 		)
 		if err != nil {
 			fmt.Println("Error:", err)
