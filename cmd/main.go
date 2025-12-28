@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/atotto/clipboard"
 	"passgen/internal/generator"
 )
 
@@ -15,6 +16,7 @@ func main() {
 	digits := flag.Bool("digits", false, "Include digits")
 	symbols := flag.Bool("symbols", false, "Include symbols")
 	count := flag.Int("count", 1, "Number of passwords to generate")
+	clipboardFlag := flag.Bool("clipboard", false, "Copy password to clipboard")
 
 	flag.Parse()
 
@@ -24,6 +26,8 @@ func main() {
 	}
 
 	fmt.Println("Generated Passwords:")
+
+	var firstPassword string
 
 	for i := 1; i <= *count; i++ {
 		password, err := generator.Generate(
@@ -38,7 +42,19 @@ func main() {
 			os.Exit(1)
 		}
 
+		if i == 1 {
+			firstPassword = password
+		}
 		fmt.Printf("%d) %s\n", i, password)
+	}
+
+	if *clipboardFlag {
+		err := clipboard.WriteAll(firstPassword)
+		if err != nil {
+			fmt.Println("Failed to copy to clipboard:", err)
+			os.Exit(1)
+		}
+		fmt.Println("\nPassword copied to clipboard ✔")
 	}
 
 }
