@@ -10,14 +10,40 @@ import (
 )
 
 func main() {
-	length := flag.Int("length", 12, "Password length")
-	upper := flag.Bool("upper", false, "Include uppercase letters")
-	lower := flag.Bool("lower", false, "Include lowercase letters")
-	digits := flag.Bool("digits", false, "Include digits")
-	symbols := flag.Bool("symbols", false, "Include symbols")
-	count := flag.Int("count", 1, "Number of passwords to generate")
-	clipboardFlag := flag.Bool("clipboard", false, "Copy password to clipboard")
-	noAmbiguous := flag.Bool("no-ambiguous", false, "Exclude ambiguous characters (0, O, l, 1, I)")
+	var (
+		length        int
+		upper         bool
+		lower         bool
+		digits        bool
+		symbols       bool
+		count         int
+		clipboardFlag bool
+		noAmbiguous   bool
+	)
+
+	flag.IntVar(&length, "length", 12, "Password length")
+	flag.IntVar(&length, "L", 12, "Password length (shorthand)")
+
+	flag.BoolVar(&upper, "upper", false, "Include uppercase letters")
+	flag.BoolVar(&upper, "u", false, "Include uppercase letters (shorthand)")
+
+	flag.BoolVar(&lower, "lower", false, "Include lowercase letters")
+	flag.BoolVar(&lower, "l", false, "Include lowercase letters (shorthand)")
+
+	flag.BoolVar(&digits, "digits", false, "Include digits")
+	flag.BoolVar(&digits, "d", false, "Include digits (shorthand)")
+
+	flag.BoolVar(&symbols, "symbols", false, "Include symbols")
+	flag.BoolVar(&symbols, "s", false, "Include symbols (shorthand)")
+
+	flag.IntVar(&count, "count", 1, "Number of passwords to generate")
+	flag.IntVar(&count, "c", 1, "Number of passwords to generate (shorthand)")
+
+	flag.BoolVar(&clipboardFlag, "clipboard", false, "Copy password to clipboard")
+	flag.BoolVar(&clipboardFlag, "C", false, "Copy password to clipboard (shorthand)")
+
+	flag.BoolVar(&noAmbiguous, "no-ambiguous", false, "Exclude ambiguous characters")
+	flag.BoolVar(&noAmbiguous, "A", false, "Exclude ambiguous characters (shorthand)")
 
 	flag.Usage = func() {
 		fmt.Println("PassGen - Secure Password Generator (Windows CLI)")
@@ -34,6 +60,8 @@ func main() {
 		fmt.Println("  passgen --length 12 --upper --lower --digits --no-ambiguous")
 		fmt.Println("  passgen --length 16 --upper --lower --clipboard")
 		fmt.Println("  passgen --length 10 --upper --digits --count 5")
+		fmt.Println("  passgen -L 16 -u -l -d -s -C -A")
+		fmt.Println("  passgen -L 16 -u -l -d -s -c 10 -C -A")
 	}
 
 	flag.Parse()
@@ -43,7 +71,7 @@ func main() {
 		return
 	}
 
-	if *count <= 0 {
+	if count <= 0 {
 		fmt.Println("Error: count must be greater than 0")
 		os.Exit(1)
 	}
@@ -52,14 +80,14 @@ func main() {
 
 	var firstPassword string
 
-	for i := 1; i <= *count; i++ {
+	for i := 1; i <= count; i++ {
 		password, err := generator.Generate(
-			*length,
-			*upper,
-			*lower,
-			*digits,
-			*symbols,
-			*noAmbiguous,
+			length,
+			upper,
+			lower,
+			digits,
+			symbols,
+			noAmbiguous,
 		)
 		if err != nil {
 			fmt.Println("Error:", err)
@@ -72,7 +100,7 @@ func main() {
 		fmt.Printf("%d) %s\n", i, password)
 	}
 
-	if *clipboardFlag {
+	if clipboardFlag {
 		err := clipboard.WriteAll(firstPassword)
 		if err != nil {
 			fmt.Println("Failed to copy to clipboard:", err)
