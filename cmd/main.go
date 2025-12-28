@@ -19,7 +19,29 @@ func main() {
 	clipboardFlag := flag.Bool("clipboard", false, "Copy password to clipboard")
 	noAmbiguous := flag.Bool("no-ambiguous", false, "Exclude ambiguous characters (0, O, l, 1, I)")
 
+	flag.Usage = func() {
+		fmt.Println("PassGen - Secure Password Generator (Windows CLI)")
+		fmt.Println()
+		fmt.Println("Usage:")
+		fmt.Println("  passgen [options]")
+		fmt.Println()
+		fmt.Println("Options:")
+		flag.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  passgen --length 16 --upper --lower --digits")
+		fmt.Println("  passgen --length 20 --upper --lower --digits --symbols")
+		fmt.Println("  passgen --length 12 --upper --lower --digits --no-ambiguous")
+		fmt.Println("  passgen --length 16 --upper --lower --clipboard")
+		fmt.Println("  passgen --length 10 --upper --digits --count 5")
+	}
+
 	flag.Parse()
+
+	if len(os.Args) == 1 {
+		flag.Usage()
+		return
+	}
 
 	if *count <= 0 {
 		fmt.Println("Error: count must be greater than 0")
