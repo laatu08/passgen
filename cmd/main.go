@@ -9,6 +9,25 @@ import (
 	"passgen/internal/generator"
 )
 
+func expandCombinedFlags(args []string) []string {
+	var result []string
+	result = append(result, args[0]) // program name
+
+	for _, arg := range args[1:] {
+		// Only process combined short flags like -uls
+		if len(arg) > 1 && arg[0] == '-' && arg[1] != '-' {
+			for _, ch := range arg[1:] {
+				result = append(result, "-"+string(ch))
+			}
+		} else {
+			result = append(result, arg)
+		}
+	}
+
+	return result
+}
+
+
 func main() {
 	var (
 		length        int
@@ -62,7 +81,10 @@ func main() {
 		fmt.Println("  passgen --length 10 --upper --digits --count 5")
 		fmt.Println("  passgen -L 16 -u -l -d -s -C -A")
 		fmt.Println("  passgen -L 16 -u -l -d -s -c 10 -C -A")
+		fmt.Println("  passgen -L 8 -udC -c 10")
 	}
+
+	os.Args = expandCombinedFlags(os.Args)
 
 	flag.Parse()
 
